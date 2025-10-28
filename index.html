@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Find The Party! — Step-by-Step</title>
+  <meta name="theme-color" content="#111827" />
+  <style>
+    :root {
+      --bg: #06070d;
+      --fg: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #14b8a6;
+      --card: #111827;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      --radius: 18px;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Inter, Helvetica, Arial;
+      background: linear-gradient(135deg, #06070d 0%, #0b0f17 40%, #1a0f29 100%);
+      color: var(--fg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 10px;
+    }
+    .card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(20,184,166,.45); box-shadow: 0 0 12px rgba(20,184,166,.5);
+    }
+    .media img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+    .content {
+      padding: 16px;
+      text-align: center;
+    }
+    h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.25rem;
+    }
+    p {
+      margin: 0 0 15px 0;
+      color: var(--muted);
+    }
+    .btn {
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: bold;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 16px 16px 16px;
+    }
+    .nav button {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      border-radius: 8px;
+      color: var(--fg);
+      padding: 8px 12px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="media">
+      <img id="stepImage" src="https://images.unsplash.com/photo-1493238792000-8113da705763?q=80&w=1400&auto=format&fit=crop" alt="Step image" />
+    </div>
+    <div class="content">
+      <h2 id="stepTitle">Step Title</h2>
+      <p id="stepDesc">Description</p>
+      <button id="actionBtn" class="btn">Open in Google Maps</button>
+    </div>
+    <div class="nav">
+      <button id="prev">← Prev</button>
+      <button id="next">Next →</button>
+    </div>
+  </div>
+
+  <script>
+    const steps = [
+      {
+        title: "🎈 Park anywhere outside",
+        desc: "Enter through back entrance.",
+        image: "https://images.unsplash.com/photo-1493238792000-8113da705763?q=80&w=1400&auto=format&fit=crop",
+        actionLabel: "🎈 Take Me There!",
+        actionUrl: "https://maps.app.goo.gl/54n42AXt92GZ9kfDA"
+      },
+      {
+        title: "🔑 At the call box",
+        desc: "Tap to reveal the gate code.",
+        image: "https://images.unsplash.com/photo-1558002038-105fb7de428f?q=80&w=1400&auto=format&fit=crop",
+        actionLabel: "🔒 Tap to Reveal Code",
+        actionCopy: "406040#"
+      },
+      {
+        title: "🎉 Locate Apartment 1022",
+        desc: "Go straight into the hall, take a right and walk straight down to Apartment 1022.",
+        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1400&auto=format&fit=crop"
+      }
+    ];
+
+    let index = 0;
+
+    const stepTitle = document.getElementById('stepTitle');
+    const stepDesc = document.getElementById('stepDesc');
+    const stepImage = document.getElementById('stepImage');
+    const actionBtn = document.getElementById('actionBtn');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+
+    function renderStep() {
+      const step = steps[index];
+      stepTitle.textContent = step.title;
+      stepDesc.textContent = step.desc;
+      stepImage.src = step.image;
+
+      if (step.actionUrl) {
+        actionBtn.textContent = step.actionLabel;
+        actionBtn.style.display = 'inline-block';
+        actionBtn.onclick = () => window.open(step.actionUrl, '_blank');
+      } else if (step.actionCopy) {
+        actionBtn.textContent = step.actionLabel;
+        actionBtn.style.display = 'inline-block';
+        actionBtn.onclick = () => {
+          navigator.clipboard.writeText(step.actionCopy);
+          try{navigator.clipboard.writeText(step.actionCopy).then(()=>{ /* toast-like UX via button text */ actionBtn.textContent='Code Copied!'; setTimeout(()=> actionBtn.textContent = step.actionLabel, 900);});}catch(e){ /* no-op */ }
+        };
+      } else {
+        actionBtn.style.display = 'none';
+        actionBtn.onclick = null;
+      }
+
+      prevBtn.disabled = index === 0;
+      nextBtn.disabled = index === steps.length - 1;
+    }
+
+    prevBtn.onclick = () => {
+      if (index > 0) {
+        index--;
+        renderStep();
+      }
+    };
+
+    nextBtn.onclick = () => {
+      if (index < steps.length - 1) {
+        index++;
+        renderStep();
+      }
+    };
+
+    renderStep();
+  </script>
+</body>
+</html>
